@@ -58,34 +58,34 @@ const AddExpenseDialog = ({ open, onOpenChange }: AddExpenseDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Add New Expense</DialogTitle>
+          <DialogTitle className="text-xl sm:text-2xl font-bold">Add New Expense</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 mt-2 sm:mt-4">
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-sm">Description</Label>
             <Input
               id="description"
               placeholder="What was this expense for?"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="text-lg"
+              className="text-base sm:text-lg h-11 sm:h-12"
             />
           </div>
 
           {/* Amount */}
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount (₹)</Label>
+            <Label htmlFor="amount" className="text-sm">Amount (₹)</Label>
             <Input
               id="amount"
               type="number"
               placeholder="0"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="text-2xl font-bold"
+              className="text-xl sm:text-2xl font-bold h-14 sm:h-16"
             />
           </div>
 
@@ -107,9 +107,9 @@ const AddExpenseDialog = ({ open, onOpenChange }: AddExpenseDialogProps) => {
           </div>
 
           {/* Category Selection */}
-          <div className="space-y-3">
-            <Label>Category</Label>
-            <div className="grid grid-cols-4 gap-3">
+          <div className="space-y-2 sm:space-y-3">
+            <Label className="text-sm">Category</Label>
+            <div className="grid grid-cols-4 gap-2 sm:gap-3">
               {categories.map((category) => {
                 const Icon = category.icon;
                 return (
@@ -117,14 +117,14 @@ const AddExpenseDialog = ({ open, onOpenChange }: AddExpenseDialogProps) => {
                     key={category.value}
                     type="button"
                     onClick={() => setSelectedCategory(category.value)}
-                    className={`p-4 rounded-xl border-2 transition-smooth hover:scale-105 ${
+                    className={`p-3 sm:p-4 rounded-xl border-2 transition-smooth active:scale-95 min-h-[68px] sm:min-h-[76px] ${
                       selectedCategory === category.value
                         ? 'border-primary bg-primary/5'
-                        : 'border-border bg-card hover:border-primary/50'
+                        : 'border-border bg-card'
                     }`}
                   >
-                    <Icon className={`w-6 h-6 mx-auto ${category.color}`} />
-                    <p className="text-xs mt-2 text-center truncate">{category.label.split(' ')[0]}</p>
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 mx-auto ${category.color}`} />
+                    <p className="text-xs mt-1.5 sm:mt-2 text-center truncate">{category.label.split(' ')[0]}</p>
                   </button>
                 );
               })}
@@ -132,7 +132,7 @@ const AddExpenseDialog = ({ open, onOpenChange }: AddExpenseDialogProps) => {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" className="w-full gradient-primary shadow-glow text-lg py-6">
+          <Button type="submit" className="w-full gradient-primary shadow-glow text-base sm:text-lg py-5 sm:py-6 h-12 sm:h-14">
             Add Expense
           </Button>
         </form>

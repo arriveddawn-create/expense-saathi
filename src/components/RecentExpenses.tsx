@@ -66,13 +66,13 @@ const expenses = [
 
 const RecentExpenses = () => {
   return (
-    <Card className="p-6 glass-card border-0 shadow-lg">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold">Recent Activity</h2>
-        <button className="text-sm text-primary hover:underline">View All</button>
+    <Card className="p-4 sm:p-6 glass-card border-0 shadow-lg">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg sm:text-xl font-bold">Recent Activity</h2>
+        <button className="text-xs sm:text-sm text-primary active:opacity-70 transition-smooth">View All</button>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3">
         {expenses.map((expense) => {
           const Icon = expense.icon;
           const yourShare = expense.amount / expense.split;
@@ -80,35 +80,35 @@ const RecentExpenses = () => {
           return (
             <div
               key={expense.id}
-              className="group p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-smooth cursor-pointer"
+              className="group p-3 sm:p-4 rounded-xl bg-card border border-border active:scale-[0.98] transition-smooth cursor-pointer"
             >
-              <div className="flex items-start gap-4">
-                <div className={`w-12 h-12 rounded-xl ${expense.bgColor} flex items-center justify-center flex-shrink-0`}>
-                  <Icon className={`w-6 h-6 ${expense.color}`} />
+              <div className="flex items-start gap-3">
+                <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${expense.bgColor} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${expense.color}`} />
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold mb-1 group-hover:text-primary transition-smooth truncate">
+                  <h3 className="font-semibold text-sm sm:text-base mb-0.5 group-active:text-primary transition-smooth truncate">
                     {expense.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-xs text-muted-foreground mb-2">
                     {expense.group} · {expense.date}
                   </p>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="px-2 py-1 rounded-full bg-secondary text-foreground">
+                  <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className="px-2 py-0.5 rounded-full bg-secondary text-foreground whitespace-nowrap">
                       {expense.paidBy} paid ₹{expense.amount}
                     </span>
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground whitespace-nowrap">
                       Split {expense.split} ways
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right flex-shrink-0">
-                  <p className={`text-sm font-medium ${expense.paidBy === "You" ? 'text-success' : 'text-owed'}`}>
+                  <p className={`text-xs font-medium ${expense.paidBy === "You" ? 'text-success' : 'text-owed'}`}>
                     {expense.paidBy === "You" ? 'You lent' : 'You owe'}
                   </p>
-                  <p className={`text-lg font-bold ${expense.paidBy === "You" ? 'text-success' : 'text-owed'}`}>
+                  <p className={`text-base sm:text-lg font-bold ${expense.paidBy === "You" ? 'text-success' : 'text-owed'}`}>
                     ₹{yourShare.toFixed(0)}
                   </p>
                 </div>
