@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Users, Receipt, TrendingUp, Wallet, Home, User, LogOut, UserPlus } from "lucide-react";
+import { Plus, Users, Receipt, TrendingUp, Wallet, User, LogOut, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import AddExpenseDialog from "@/components/AddExpenseDialog";
+import AddFriendsToGroupDialog from "@/components/AddFriendsToGroupDialog";
 
 const Index = () => {
   const [showAddExpense, setShowAddExpense] = useState(false);
-  const [activeTab, setActiveTab] = useState("home");
+  const [showAddFriends, setShowAddFriends] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<{ id: string; name: string } | null>(null);
+  const [activeTab, setActiveTab] = useState("groups");
   const [user, setUser] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);
   const [expenses, setExpenses] = useState<any[]>([]);
@@ -101,90 +104,6 @@ const Index = () => {
       {/* Main Content - Scrollable */}
       <main className="flex-1 overflow-y-auto">
         <div className="px-4 py-4 pb-6">
-          {activeTab === "home" && (
-            <>
-              {groups.length === 0 ? (
-                // Empty state for no groups
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 rounded-3xl bg-primary/10 mx-auto mb-4 flex items-center justify-center">
-                    <Users className="w-10 h-10 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">No Groups Yet</h3>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    Create a group to start tracking expenses with friends
-                  </p>
-                  <Button
-                    onClick={() => navigate("/onboarding")}
-                    className="gradient-primary text-primary-foreground"
-                  >
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Create Your First Group
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  {/* Quick Stats */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    <Card className="p-3 glass-card border-0">
-                      <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
-                        <Users className="w-4 h-4 text-primary" />
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-0.5">Groups</p>
-                      <p className="text-lg font-bold">{groups.length}</p>
-                    </Card>
-
-                    <Card className="p-3 glass-card border-0">
-                      <div className="w-9 h-9 rounded-xl bg-success/10 flex items-center justify-center mb-2">
-                        <Receipt className="w-4 h-4 text-success" />
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-0.5">Expenses</p>
-                      <p className="text-lg font-bold">{expenses.length}</p>
-                    </Card>
-
-                    <Card className="p-3 glass-card border-0">
-                      <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center mb-2">
-                        <TrendingUp className="w-4 h-4 text-accent" />
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-0.5">Total</p>
-                      <p className="text-lg font-bold">
-                        ₹{expenses.reduce((sum, e) => sum + Number(e.amount), 0).toLocaleString()}
-                      </p>
-                    </Card>
-                  </div>
-
-                  {/* Recent Expenses */}
-                  {expenses.length > 0 ? (
-                    <Card className="p-4 glass-card border-0">
-                      <h2 className="text-base font-semibold mb-3">Recent Expenses</h2>
-                      <div className="space-y-3">
-                        {expenses.slice(0, 5).map((expense) => (
-                          <div key={expense.id} className="flex items-center justify-between py-2">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                                <Receipt className="w-4 h-4 text-primary" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium">{expense.description}</p>
-                                <p className="text-xs text-muted-foreground">{expense.groups?.name}</p>
-                              </div>
-                            </div>
-                            <p className="text-sm font-bold">₹{Number(expense.amount).toLocaleString()}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                  ) : (
-                    <Card className="p-8 text-center glass-card border-0">
-                      <Receipt className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-                      <p className="text-sm text-muted-foreground">No expenses yet</p>
-                      <p className="text-xs text-muted-foreground mt-1">Tap + to add your first expense</p>
-                    </Card>
-                  )}
-                </>
-              )}
-            </>
-          )}
-
           {activeTab === "groups" && (
             <div>
               {groups.length > 0 ? (
@@ -214,6 +133,16 @@ const Index = () => {
                             </p>
                           </div>
                         </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setSelectedGroup({ id: group.id, name: group.name });
+                            setShowAddFriends(true);
+                          }}
+                        >
+                          <UserPlus className="w-4 h-4" />
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -309,18 +238,6 @@ const Index = () => {
       <nav className="flex-shrink-0 backdrop-blur-xl bg-background/95 border-t border-border/50 safe-area-bottom">
         <div className="flex justify-around items-center px-2 py-2">
           <button
-            onClick={() => setActiveTab("home")}
-            className={`flex flex-col items-center gap-1 py-2 px-5 rounded-xl transition-all active:scale-95 ${
-              activeTab === "home"
-                ? "text-primary bg-primary/10"
-                : "text-muted-foreground"
-            }`}
-          >
-            <Home className="w-5 h-5" />
-            <span className="text-xs font-medium">Home</span>
-          </button>
-
-          <button
             onClick={() => setActiveTab("groups")}
             className={`flex flex-col items-center gap-1 py-2 px-5 rounded-xl transition-all active:scale-95 ${
               activeTab === "groups"
@@ -330,6 +247,14 @@ const Index = () => {
           >
             <Users className="w-5 h-5" />
             <span className="text-xs font-medium">Groups</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/friends")}
+            className="flex flex-col items-center gap-1 py-2 px-5 rounded-xl transition-all active:scale-95 text-muted-foreground"
+          >
+            <UserPlus className="w-5 h-5" />
+            <span className="text-xs font-medium">Friends</span>
           </button>
 
           <button
@@ -360,6 +285,16 @@ const Index = () => {
 
       {/* Add Expense Dialog */}
       <AddExpenseDialog open={showAddExpense} onOpenChange={setShowAddExpense} />
+      
+      {/* Add Friends to Group Dialog */}
+      {selectedGroup && (
+        <AddFriendsToGroupDialog
+          open={showAddFriends}
+          onOpenChange={setShowAddFriends}
+          groupId={selectedGroup.id}
+          groupName={selectedGroup.name}
+        />
+      )}
     </div>
   );
 };
