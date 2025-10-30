@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          city: string
+          created_at: string | null
+          id: string
+          is_default: boolean | null
+          state: string
+          street: string
+          user_id: string | null
+          zip_code: string
+        }
+        Insert: {
+          city: string
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          state: string
+          street: string
+          user_id?: string | null
+          zip_code: string
+        }
+        Update: {
+          city?: string
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          state?: string
+          street?: string
+          user_id?: string | null
+          zip_code?: string
+        }
+        Relationships: []
+      }
+      cart_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          medicine_id: string | null
+          quantity: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          medicine_id?: string | null
+          quantity?: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          medicine_id?: string | null
+          quantity?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string | null
+          icon: string
+          icon_color: string
+          id: string
+          item_count: number | null
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          icon: string
+          icon_color: string
+          id?: string
+          item_count?: number | null
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          icon?: string
+          icon_color?: string
+          id?: string
+          item_count?: number | null
+          name?: string
+        }
+        Relationships: []
+      }
       expense_splits: {
         Row: {
           amount: number
@@ -172,6 +264,139 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      medicines: {
+        Row: {
+          category_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          in_stock: boolean | null
+          name: string
+          price: number
+          rating: number | null
+          requires_prescription: boolean | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          in_stock?: boolean | null
+          name: string
+          price: number
+          rating?: number | null
+          requires_prescription?: boolean | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          in_stock?: boolean | null
+          name?: string
+          price?: number
+          rating?: number | null
+          requires_prescription?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medicines_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          medicine_id: string | null
+          order_id: string | null
+          price: number
+          quantity: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          medicine_id?: string | null
+          order_id?: string | null
+          price: number
+          quantity: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          medicine_id?: string | null
+          order_id?: string | null
+          price?: number
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address_id: string | null
+          created_at: string | null
+          delivery_fee: number | null
+          estimated_delivery: string | null
+          id: string
+          order_number: string
+          pharmacy_name: string | null
+          status: string
+          total_amount: number
+          user_id: string | null
+        }
+        Insert: {
+          address_id?: string | null
+          created_at?: string | null
+          delivery_fee?: number | null
+          estimated_delivery?: string | null
+          id?: string
+          order_number: string
+          pharmacy_name?: string | null
+          status?: string
+          total_amount: number
+          user_id?: string | null
+        }
+        Update: {
+          address_id?: string | null
+          created_at?: string | null
+          delivery_fee?: number | null
+          estimated_delivery?: string | null
+          id?: string
+          order_number?: string
+          pharmacy_name?: string | null
+          status?: string
+          total_amount?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_address_id_fkey"
+            columns: ["address_id"]
+            isOneToOne: false
+            referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
