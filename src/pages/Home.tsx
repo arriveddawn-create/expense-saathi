@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { MapPin, ShoppingCart, Zap, Plus, Home as HomeIcon, Search, Package, User } from "lucide-react";
 
 interface Category {
@@ -16,11 +17,13 @@ interface Category {
 export default function Home() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkAuth();
     loadCategories();
+    loadCartCount();
   }, []);
 
   const checkAuth = async () => {
@@ -42,6 +45,17 @@ export default function Home() {
     setLoading(false);
   };
 
+  const loadCartCount = async () => {
+    const { data, error } = await supabase
+      .from("cart_items")
+      .select("quantity");
+
+    if (!error && data) {
+      const total = data.reduce((sum, item) => sum + item.quantity, 0);
+      setCartCount(total);
+    }
+  };
+
   const getIconComponent = (iconName: string) => {
     const icons: any = {
       Thermometer: "🌡️",
@@ -60,7 +74,14 @@ export default function Home() {
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-2">
             <div className="text-sm text-muted-foreground">Deliver to</div>
-            <ShoppingCart className="w-6 h-6" />
+            <button onClick={() => navigate("/cart")} className="relative">
+              <ShoppingCart className="w-6 h-6" />
+              {cartCount > 0 && (
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary">
+                  {cartCount}
+                </Badge>
+              )}
+            </button>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <MapPin className="w-4 h-4 text-primary" />
